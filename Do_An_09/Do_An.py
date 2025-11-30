@@ -5,9 +5,6 @@ from tkcalendar import DateEntry
 import os
 import mysql.connector
 
-from Do_An_09.Nhap import date_entry
-
-
 #Kê nối MySQL
 def connect_db():
     try:
@@ -77,11 +74,6 @@ tk.Label(frame_info, text = "Hạn sử dụng").grid(row = 6, column=2, padx=50
 entry_hansudung = DateEntry(frame_info, width=20, background="darkblue", foreground="white", date_pattern="yyyy-mm-dd")
 entry_hansudung.grid(row=6, column=3, sticky="w")
 
-'''
-frame_search = tk.Frame(root)
-frame_search.grid(row=8, column=0, pady=5)
-tk.Label(frame_search, text="Tìm theo tên:").pack(side="left")
-'''
 #
 
 frame_table = tk.Frame(root)
@@ -319,8 +311,8 @@ tk.Label(frame_btn, text = "Nhập tên tìm kiếm").grid(row=0, column=3, padx
 entry_search = tk.Entry(frame_btn, width=20)
 entry_search.grid(row = 0, column=4, padx=5)
 
-Button(frame_btn, text="TÌM", width=10, command=lambda: tim_kiem()).grid(row = 1, column=3, padx=5)
-Button(frame_btn, text="HIỂN THỊ TẤT CẢ", width=14, command=load_data).grid(row = 1, column=4, padx=5)
+Button(frame_btn, text="TÌM", width=16, command=lambda: tim_kiem()).grid(row = 1, column=3, padx=5)
+Button(frame_btn, text="HIỂN THỊ TẤT CẢ", width=16, command=load_data).grid(row = 1, column=4, padx=5)
 
 
 #Khóa kích thước bảng
