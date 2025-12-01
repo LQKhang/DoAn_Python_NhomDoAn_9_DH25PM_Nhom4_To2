@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk, messagebox
-import tkinter as tk
 from tkcalendar import DateEntry
+import tkinter as tk
 import os
 import mysql.connector
 
@@ -27,10 +27,12 @@ def center_window(win, w=800, h=500):
     y = (hs // 2) - (h // 2)
     win.geometry(f"{w}x{h}+{x}+{y}")
 
+#Tạo cửa sổ
 root = tk.Tk()
 root.title('CUA HANG QUAN LY THUOC NONG DUOC')
 center_window(root)
 
+#Tên tiêu đề
 tk.Label(root, text="QUẢN LÝ THUỐC NÔNG DƯỢC", font=("Arial", 14, "bold")).grid()
 
 #Tạo logo
@@ -38,7 +40,7 @@ direstory_path = os.path.dirname(__file__)
 path_images = os.path.join(direstory_path, 'images')
 root.iconbitmap(os.path.join(path_images, 'meds_bootle_plants_leaf_nature_eco_icon_186002.ico'))
 
-#Tạo thộc tính
+#Frame nhập thông tin
 frame_info = tk.Frame(root)
 frame_info.grid(pady=10, padx=10, sticky="w")
 
@@ -74,27 +76,26 @@ tk.Label(frame_info, text = "Hạn sử dụng").grid(row = 6, column=2, padx=50
 entry_hansudung = DateEntry(frame_info, width=20, background="darkblue", foreground="white", date_pattern="yyyy-mm-dd")
 entry_hansudung.grid(row=6, column=3, sticky="w")
 
-#
-
+#Tên bảng danh sách thuốc
 frame_table = tk.Frame(root)
 frame_table.grid(row=2, column=0, padx=10, pady=10)
 tk.Label(frame_table, text="Danh sách thuốc", font=("Arial", 10, "bold")).pack(pady=5)
 
-
 #Treeview
 columns = ("Tên sản phẩm", "Phân loại", "Giá", "Số lượng", "Thương hiệu", "Mã sản phẩm", "Ngày sản xuất", "Hạn sử dụng")
 tree = ttk.Treeview(root, columns = columns, show = "headings")
+
 for col in columns:
     tree.heading(col, text=col.capitalize())
 
 tree.column("Tên sản phẩm", width=100, anchor="center")
-tree.column("Phân loại", width=100)
+tree.column("Phân loại", width=100, anchor="center")
 tree.column("Giá", width=100, anchor="center")
 tree.column("Số lượng", width=100, anchor="center")
-tree.column("Thương hiệu", width=100)
-tree.column("Mã sản phẩm", width=100)
-tree.column("Ngày sản xuất", width=100)
-tree.column("Hạn sử dụng", width=100)
+tree.column("Thương hiệu", width=100, anchor="center")
+tree.column("Mã sản phẩm", width=100, anchor="center")
+tree.column("Ngày sản xuất", width=100, anchor="center")
+tree.column("Hạn sử dụng", width=100, anchor="center")
 
 tree.grid(row=6, column=0, sticky="nesw")
 
@@ -108,7 +109,6 @@ def clear_input():
     entry_thuonghieu.delete(0, tk.END)
     entry_ngaysanxuat.set_date("2000-01-01")
     entry_hansudung.set_date("2000-01-01")
-
     cbb_Phanloai.set("")
 
 def load_data():
@@ -235,8 +235,8 @@ def luu_sp():
     cur.execute("""
         UPDATE thuocnongduoc 
         SET tensp=%s, phanloai=%s, gia=%s, soluong=%s, thuonghieu=%s, ngaysanxuat=%s, hansudung=%s
-        WHERE masanpham=%s
-    """, (tensp, phanloai, gia, soluong, thuonghieu, ngaysanxuat, hansudung,masanpham))
+        WHERE masanpham=%s""",
+        (tensp, phanloai, gia, soluong, thuonghieu, ngaysanxuat, hansudung,masanpham))
 
     conn.commit()
     cur.close()
@@ -255,15 +255,19 @@ def sap_xep():
         "Trừ cỏ": 3,
         "Thuốc sinh trưởng": 4
     }
+
     data = []
+
     for item in tree.get_children():
         data.append(tree.item(item)["values"])
 
     tree.delete(*tree.get_children())
+
     data.sort(
         key=lambda x: sort_order.get(x[1], 99),
         reverse=False
     )
+
     for row in data:
         tree.insert("", tk.END, values=row)
 
@@ -296,27 +300,60 @@ def tim_kiem():
     cur.close()
     conn.close()
 
+# Hiệu ứng chuển màu cho Button
+def mau_button(bt):
+
+    def on_enter(e): #Khi di chuột vào
+        bt.config(background="#b3e6ff")
+
+    def on_leave(e): #Khi di chuột ra
+        bt.config(background="#f0f0f0")
+
+    #Gán hiệu ứng
+    bt.bind("<Enter>", on_enter)
+    bt.bind("<Leave>", on_leave)
+
+
 #Tạo nút
 frame_btn = tk.Frame(root)
 frame_btn.grid(row=8,column = 0, pady=10)
 
-Button(frame_btn, text='THÊM', width=10, command=them_sp).grid(row=0, column=0, padx=5)
-Button(frame_btn, text='XÓA', width=10, command=xoa_sp).grid(row=0, column=1, padx=5)
-Button(frame_btn, text='HỦY', width=10, command = clear_input).grid(row=0, column=2, padx=5)
-Button(frame_btn, text='SẮP XẾP', width=10, command=sap_xep).grid(row=1, column=0, padx=5)
-Button(frame_btn, text='LƯU', width=10, command=luu_sp).grid(row=1, column=1, padx=5)
-Button(frame_btn, text= 'THOAT', width=10, command=root.quit).grid(row=1, column=2, padx=5)
+bt_them = Button(frame_btn, text='THÊM', width=10, command=them_sp)
+bt_them.grid(row=0, column=0, padx=5)
+
+bt_xoa = Button(frame_btn, text='XÓA', width=10, command=xoa_sp)
+bt_xoa.grid(row=0, column=1, padx=5)
+
+bt_huy = Button(frame_btn, text='HỦY', width=10, command = clear_input)
+bt_huy.grid(row=0, column=2, padx=5)
+
+bt_sapxep = Button(frame_btn, text='SẮP XẾP', width=10, command=sap_xep)
+bt_sapxep.grid(row=1, column=0, padx=5)
+
+bt_luu = Button(frame_btn, text='LƯU', width=10, command=luu_sp)
+bt_luu.grid(row=1, column=1, padx=5)
+
+bt_thoat = Button(frame_btn, text= 'THOAT', width=10, command=root.quit)
+bt_thoat.grid(row=1, column=2, padx=5)
 
 tk.Label(frame_btn, text = "Nhập tên tìm kiếm").grid(row=0, column=3, padx=5)
 entry_search = tk.Entry(frame_btn, width=20)
 entry_search.grid(row = 0, column=4, padx=5)
 
-Button(frame_btn, text="TÌM", width=16, command=lambda: tim_kiem()).grid(row = 1, column=3, padx=5)
-Button(frame_btn, text="HIỂN THỊ TẤT CẢ", width=16, command=load_data).grid(row = 1, column=4, padx=5)
+bt_tim = Button(frame_btn, text="TÌM", width=16, command=lambda: tim_kiem())
+bt_tim.grid(row = 1, column=3, padx=5)
 
+bt_hienthi = Button(frame_btn, text="HIỂN THỊ TẤT CẢ", width=16, command=load_data)
+bt_hienthi.grid(row = 1, column=4, padx=5)
+
+#Gán hiêu ứng button
+buttons = [bt_them, bt_xoa, bt_huy, bt_sapxep, bt_luu, bt_thoat, bt_tim, bt_hienthi]
+
+for a in buttons:
+    mau_button(a)
 
 #Khóa kích thước bảng
-#root.resizable(FALSE, FALSE)
+root.resizable(FALSE, FALSE)
 
 #load dữ liệu
 load_data()
