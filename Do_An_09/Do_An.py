@@ -147,6 +147,18 @@ def them_sp():
         messagebox.showwarning("Thiếu dữ liệu", "Vui lòng nhập đủ thông tin!")
         return
 
+    try:
+        gia = float(gia)
+    except ValueError:
+        messagebox.showerror("Lỗi", "Giá phải là số!")
+        return
+
+    try:
+        soluong = int(soluong)
+    except ValueError:
+        messagebox.showerror("Lỗi", "Số lượng phải là số nguyên!")
+        return
+
     conn = connect_db()
     if not conn:
         return
@@ -232,6 +244,18 @@ def luu_sp():
     masanpham = entry_masanpham.get().strip()
     ngaysanxuat = entry_ngaysanxuat.get()
     hansudung = entry_hansudung.get()
+
+    try:
+        gia = float(gia)
+    except ValueError:
+        messagebox.showerror("Lỗi", "Giá phải là số!")
+        return
+
+    try:
+        soluong = int(soluong)
+    except ValueError:
+        messagebox.showerror("Lỗi", "Số lượng phải là số nguyên!")
+        return
 
     conn = connect_db()
     if not conn:
