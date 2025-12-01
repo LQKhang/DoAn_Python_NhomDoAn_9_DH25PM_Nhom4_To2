@@ -49,7 +49,13 @@ entry_tensp = tk.Entry(frame_info, width=20)
 entry_tensp.grid(row = 3, column = 1, sticky="w")
 
 tk.Label(frame_info, text = "Phân loại").grid(row = 4, column=0, pady=3, padx=40, sticky="w")
-cbb_Phanloai = ttk.Combobox(frame_info, values=["Trừ sâu", "Trừ bệnh", "Trừ cỏ", "Thuốc sinh trưởng"], state="readonly")
+cbb_Phanloai = ttk.Combobox(frame_info, values=["Trừ sâu",
+                                                "Trừ bệnh",
+                                                "Trừ cỏ",
+                                                "Thuốc sinh trưởng",
+                                                "Phân bón vô cơ",
+                                                "Phân bón hữu cơ",
+                                                "Chế phẩm sinh học"],state="readonly")
 cbb_Phanloai.grid(row = 4, column=1, sticky="w")
 
 tk.Label(frame_info, text = "Giá").grid(row = 5, column=0, pady=3, padx=40, sticky="w")
@@ -253,7 +259,10 @@ def sap_xep():
         "Trừ sâu": 1,
         "Trừ bệnh": 2,
         "Trừ cỏ": 3,
-        "Thuốc sinh trưởng": 4
+        "Thuốc sinh trưởng": 4,
+        "Phân bón vô cơ": 5,
+        "Phân bón hữu cơ": 6,
+        "Chế phẩm sinh học": 7,
     }
 
     data = []
