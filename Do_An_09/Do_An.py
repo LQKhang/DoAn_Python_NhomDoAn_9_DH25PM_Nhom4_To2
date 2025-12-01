@@ -333,6 +333,21 @@ def tim_kiem():
     cur.close()
     conn.close()
 
+def thoat_ct():
+    tra_loi = messagebox.askyesnocancel(
+        "Thoát",
+        "Bạn có muốn lưu sản phẩm trước khi thoát không?"
+    )
+
+    if tra_loi is True:  # YES
+        luu_sp()         # Lưu sản phẩm
+        root.destroy()   # Thoát chương trình
+
+    elif tra_loi is False:  # NO
+        root.destroy()
+
+
+
 # Hiệu ứng chuển màu cho Button
 def mau_button(bt):
 
@@ -366,7 +381,7 @@ bt_sapxep.grid(row=1, column=0, padx=5)
 bt_luu = Button(frame_btn, text='LƯU', width=10, command=luu_sp)
 bt_luu.grid(row=1, column=1, padx=5)
 
-bt_thoat = Button(frame_btn, text= 'THOAT', width=10, command=root.quit)
+bt_thoat = Button(frame_btn, text= 'THOAT', width=10, command=thoat_ct)
 bt_thoat.grid(row=1, column=2, padx=5)
 
 tk.Label(frame_btn, text = "Nhập tên tìm kiếm").grid(row=0, column=3, padx=5)
