@@ -1,9 +1,17 @@
 from tkinter import *
 from tkinter import ttk, messagebox
 from tkcalendar import DateEntry
+from decimal import Decimal
+#thư viện xuất excel
+from tkinter.filedialog import asksaveasfilename
+from openpyxl.styles import Font
+import openpyxl
+
 import tkinter as tk
 import os
 import mysql.connector
+import decimal
+
 
 #Kê nối MySQL
 def connect_db():
@@ -127,7 +135,10 @@ def load_data():
     cur.execute("select * from thuocnongduoc")
 
     for row in cur.fetchall():
-        tree.insert("", tk.END, values=row)
+        #tree.insert("", tk.END, values=row)
+        data = list(row)
+        data[2] = f"{data[2]} VNĐ"
+        tree.insert("", tk.END, values=data)
 
     cur.close()
     conn.close()
@@ -148,7 +159,7 @@ def them_sp():
         return
 
     try:
-        gia = float(gia)
+        gia = Decimal(gia)
     except ValueError:
         messagebox.showerror("Lỗi", "Giá phải là số!")
         return
@@ -168,7 +179,7 @@ def them_sp():
         cur.execute("""
             insert into thuocnongduoc(tensp, phanloai, gia, soluong, thuonghieu, masanpham, ngaysanxuat, hansudung)
             values (%s, %s, %s, %s, %s, %s, %s, %s)
-        """, (tensp , phanloai, gia, soluong, thuonghieu, masanpham, ngaysanxuat, hansudung))
+        """, (tensp , phanloai, gia , soluong, thuonghieu, masanpham, ngaysanxuat, hansudung))
 
         conn.commit()
         load_data()
@@ -346,7 +357,49 @@ def thoat_ct():
     elif tra_loi is False:  # NO
         root.destroy()
 
+def xuatex():
+    try:
+        # Hỏi vị trí lưu file
+        file_path = asksaveasfilename(
+            defaultextension=".xlsx",
+            filetypes=[("Excel Files", "*.xlsx")],
+            title="Lưu file Excel"
+        )
+        if not file_path:
+            return
 
+        # Kết nối db
+        conn = connect_db()
+        if not conn:
+            return
+
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT tensp, phanloai, gia, soluong, thuonghieu, masanpham, ngaysanxuat, hansudung FROM thuocnongduoc")
+        data = cur.fetchall()
+        columns = [i[0] for i in cur.description]  # Lấy tên cột
+
+        # Tạo file Excel
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Danh sách SP"
+
+        # Ghi tiêu đề
+        for col, name in enumerate(columns, start=1):
+            ws.cell(row=1, column=col, value=name)
+
+        # Ghi dữ liệu
+        for row, record in enumerate(data, start=2):
+            for col, value in enumerate(record, start=1):
+                if col == 3:
+                    value = f"{value:,.3f} VNĐ"
+
+                ws.cell(row=row, column=col, value=value)
+
+        # Lưu file
+        wb.save(file_path)
+    except Exception as e:
+        messagebox.showerror("Lỗi", f"Không thể xuất Excel!\n{e}")
 
 # Hiệu ứng chuển màu cho Button
 def mau_button(bt):
@@ -393,6 +446,10 @@ bt_tim.grid(row = 1, column=3, padx=5)
 
 bt_hienthi = Button(frame_btn, text="HIỂN THỊ TẤT CẢ", width=16, command=load_data)
 bt_hienthi.grid(row = 1, column=4, padx=5)
+
+bt_xuatex =  Button(frame_btn, text="XUẤT EXCEL", width=16, command=xuatex)
+bt_xuatex.grid(row = 1, column=5, padx=5)
+
 
 #Gán hiêu ứng button
 buttons = [bt_them, bt_xoa, bt_huy, bt_sapxep, bt_luu, bt_thoat, bt_tim, bt_hienthi]
